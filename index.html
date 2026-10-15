@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MAHAK</title>
+    <script>
+      // Apply the persisted theme + direction before first paint so the shell
+      // never flashes an incorrect theme or direction (FR-060, FR-061).
+      // No secrets are read here — only shell-namespaced presentation keys.
+      (function () {
+        try {
+          var theme = localStorage.getItem("mahak.shell.theme");
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var resolved =
+            theme === "dark" || theme === "light"
+              ? theme
+              : prefersDark
+                ? "dark"
+                : "light";
+          document.documentElement.setAttribute("data-theme", resolved);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

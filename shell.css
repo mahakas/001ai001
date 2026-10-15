@@ -1,0 +1,509 @@
+/**
+ * Shell layout (FR-001-FR-004, FR-021, FR-025).
+ *
+ * Layout uses *logical* properties and flexbox main-axis ordering, so the
+ * single root `dir` attribute mirrors every region — sidebar side, header
+ * layout, main content — with no per-component direction conditionals
+ * (research.md R-08, FR-025).
+ *
+ * The active viewport class is set by JavaScript as `data-viewport` on the
+ * frame (FR-016: width-only resolution is the single source of truth), not by
+ * a media query, so the responsive suites assert against one deterministic
+ * signal.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  /* FR-021: no viewport class may require horizontal scrolling. */
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--shell-bg);
+  color: var(--shell-fg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Arabic",
+    "Noto Naskh Arabic", "Vazirmatn", Tahoma, sans-serif;
+  font-size: 1rem;
+  line-height: 1.5;
+  overflow-x: clip;
+  /* NFR-007: allow text/zoom scaling without clipping regions. */
+  -webkit-text-size-adjust: 100%;
+}
+
+#root {
+  isolation: isolate;
+}
+
+/* --- Focus visibility (FR-037) ------------------------------------------- */
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--shell-accent);
+  outline-offset: 2px;
+  border-radius: var(--shell-radius-sm);
+}
+
+.shell-sr-only {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip-to-main affordance (FR-035): hidden until focused, then reachable. */
+.shell-skip-link {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-start: 0.5rem;
+  z-index: var(--shell-z-offline);
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--shell-radius-md);
+  background: var(--shell-accent);
+  color: var(--shell-fg-on-accent);
+  font-weight: 600;
+  text-decoration: none;
+  transform: translateX(-120%);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform var(--shell-transition-duration) var(--shell-transition-easing),
+    opacity var(--shell-transition-duration) var(--shell-transition-easing);
+}
+
+[dir="rtl"] .shell-skip-link {
+  transform: translateX(120%);
+}
+
+.shell-skip-link:focus-visible {
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Frame --------------------------------------------------------------- */
+
+.shell-frame {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100%;
+  background: var(--shell-bg);
+  color: var(--shell-fg);
+}
+
+.shell-body {
+  display: flex;
+  flex: 1 1 auto;
+  min-block-size: 0;
+  align-items: stretch;
+}
+
+/* --- Regions: stable, independently addressable anchors (FR-002) --------- */
+
+.shell-sidebar-region {
+  /* Width is set inline from the sidebar presentation so the collapse
+     transition and the test suites share one measurable value (NFR-003). */
+  flex: 0 0 auto;
+  min-block-size: 0;
+  background: var(--shell-bg-elevated);
+  border-inline-end: 1px solid var(--shell-border);
+  overflow: hidden;
+  transition: width var(--shell-transition-duration) var(--shell-transition-easing);
+}
+
+/* The mobile class never shows a permanent sidebar (FR-019). */
+.shell-frame[data-viewport="mobile"] .shell-sidebar-region {
+  display: none;
+}
+
+.shell-main-column {
+  display: flex;
+  flex: 1 1 auto;
+  min-inline-size: 0; /* allow the column to shrink without overflow */
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.shell-header-region {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.75rem;
+  block-size: var(--shell-header-height);
+  min-block-size: var(--shell-header-height);
+  padding-inline: 1rem;
+  background: var(--shell-bg-elevated);
+  border-block-end: 1px solid var(--shell-border);
+  /* The header hosts global actions and identity — never primary nav (FR-004). */
+}
+
+.shell-main-region {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--shell-bg);
+}
+
+/* Whole-frame loading: all three regions present but inert (FR-059). */
+.shell-frame[data-shell-ready="false"] .shell-sidebar-region,
+.shell-frame[data-shell-ready="false"] .shell-header-region,
+.shell-frame[data-shell-ready="false"] .shell-main-region {
+  pointer-events: none;
+  filter: saturate(0.35);
+  opacity: 0.7;
+}
+
+/* --- Header internals ---------------------------------------------------- */
+
+.shell-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--shell-fg);
+}
+
+.shell-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-inline-start: auto;
+  flex-wrap: wrap;
+}
+
+/* --- Buttons ------------------------------------------------------------- */
+
+.shell-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4375rem 0.75rem;
+  border: 1px solid var(--shell-border-strong);
+  border-radius: var(--shell-radius-md);
+  background: var(--shell-bg);
+  color: var(--shell-fg);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: background var(--shell-transition-duration) var(--shell-transition-easing),
+    color var(--shell-transition-duration) var(--shell-transition-easing);
+}
+
+.shell-button:hover {
+  background: var(--shell-bg-hover);
+}
+
+.shell-button[data-variant="primary"] {
+  background: var(--shell-accent);
+  border-color: var(--shell-accent);
+  color: var(--shell-fg-on-accent);
+}
+
+.shell-button[data-variant="primary"]:hover {
+  filter: brightness(1.08);
+}
+
+.shell-button[data-variant="ghost"] {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* --- Navigation list ----------------------------------------------------- */
+
+.shell-nav {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+}
+
+.shell-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  list-style: none;
+  margin: 0;
+  flex: 1 1 auto;
+}
+
+.shell-nav-item {
+  display: contents;
+}
+
+.shell-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--shell-radius-md);
+  color: var(--shell-fg-muted);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  width: 100%;
+  text-align: start;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background var(--shell-transition-duration) var(--shell-transition-easing);
+}
+
+.shell-nav-link:hover {
+  background: var(--shell-bg-hover);
+  color: var(--shell-fg);
+}
+
+/* Active destination: indicated visually and semantically (FR-010). */
+.shell-nav-link[data-active="true"] {
+  background: var(--shell-bg-active);
+  color: var(--shell-accent);
+  font-weight: 600;
+  box-shadow: inset-inline-start: 3px solid var(--shell-accent);
+}
+
+/* Compact rail: labels hidden but every destination still reachable (FR-009). */
+.shell-nav[data-collapsed="true"] .shell-nav-link {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+.shell-nav[data-collapsed="true"] .shell-nav-label {
+  display: none;
+}
+
+.shell-nav-icon {
+  flex: 0 0 auto;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Sidebar collapse control ------------------------------------------- */
+
+.shell-collapse-control {
+  margin: 0 0.75rem 0.5rem;
+  padding: 0.5rem;
+}
+
+.shell-nav[data-collapsed="true"] .shell-collapse-control {
+  padding-inline: 0;
+}
+
+/* --- Drawer (mobile overlay) -------------------------------------------- */
+
+.shell-drawer {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inline-size: min(20rem, 86vw);
+  max-inline-size: 86vw;
+  z-index: var(--shell-z-drawer);
+  display: flex;
+  flex-direction: column;
+  background: var(--shell-bg-elevated);
+  color: var(--shell-fg);
+  box-shadow: var(--shell-shadow-lg);
+  overflow: hidden;
+  /* NFR-003: open/close visibly completes within 300 ms. */
+  transition: transform var(--shell-transition-duration) var(--shell-transition-easing);
+  transform: translateX(0);
+}
+
+/* The drawer slides in from the *inline-start* edge, which is the correct
+   side in both directions because logical properties follow the root `dir`
+   (FR-026). Hidden state slides it fully out. */
+.shell-drawer[data-open="false"] {
+  transform: translateX(-100%);
+  /* Keep a closed drawer out of the tab order and hide it once the slide-out
+     has completed (FR-038, FR-022). */
+  visibility: hidden;
+  transition: transform var(--shell-transition-duration) var(--shell-transition-easing),
+    visibility 0s linear var(--shell-transition-duration);
+}
+
+/* Transforms are physical, so RTL hides toward the opposite side. */
+[dir="rtl"] .shell-drawer[data-open="false"] {
+  transform: translateX(100%);
+}
+
+.shell-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  block-size: var(--shell-header-height);
+  padding-inline: 1rem;
+  border-block-end: 1px solid var(--shell-border);
+}
+
+.shell-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--shell-z-scrim);
+  background: var(--shell-scrim);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--shell-transition-duration) var(--shell-transition-easing);
+}
+
+.shell-scrim[data-open="true"] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* --- Shell states (FR-047-FR-052) --------------------------------------- */
+
+.shell-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: var(--shell-radius-lg);
+  border: 1px solid var(--shell-border);
+  inline-size: 100%;
+}
+
+.shell-state[data-state="loading"] {
+  color: var(--shell-state-loading-fg);
+  background: var(--shell-state-loading-bg);
+}
+
+.shell-state[data-state="empty"] {
+  color: var(--shell-state-empty-fg);
+  background: var(--shell-state-empty-bg);
+}
+
+.shell-state[data-state="error"] {
+  color: var(--shell-state-error-fg);
+  background: var(--shell-state-error-bg);
+  border-color: var(--shell-state-error-border);
+}
+
+.shell-state[data-state="unavailable"] {
+  color: var(--shell-state-unavailable-fg);
+  background: var(--shell-state-unavailable-bg);
+  border-color: var(--shell-state-unavailable-border);
+}
+
+.shell-state[data-state="offline"] {
+  color: var(--shell-state-offline-fg);
+  background: var(--shell-state-offline-bg);
+  border-color: var(--shell-state-offline-border);
+}
+
+/* A defined public entry point (sign-in / sign-up) is neither a module state
+   nor an error — it uses the neutral surface tokens. */
+.shell-state[data-state="entry"] {
+  color: var(--shell-state-empty-fg);
+  background: var(--shell-state-empty-bg);
+}
+
+.shell-state-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.shell-state-message {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: inherit;
+}
+
+/* Offline banner stays visible above the frame (FR-051). */
+.shell-offline-indicator {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: var(--shell-z-offline);
+}
+
+/* Skeleton shimmer for whole-frame + per-region loading (FR-047, FR-059). */
+.shell-skeleton {
+  display: block;
+  inline-size: 100%;
+  block-size: 0.75rem;
+  border-radius: var(--shell-radius-sm);
+  background: var(--shell-bg-inset);
+  overflow: hidden;
+  position: relative;
+}
+
+.shell-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--shell-bg-hover), transparent);
+  animation: shell-skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shell-skeleton-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* --- Misc --------------------------------------------------------------- */
+
+.shell-theme-controls,
+.shell-locale-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.1875rem;
+  border-radius: var(--shell-radius-md);
+  background: var(--shell-bg-inset);
+}
+
+.shell-segment {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--shell-fg-muted);
+  padding: 0.3125rem 0.5625rem;
+  border-radius: var(--shell-radius-sm);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.shell-segment[data-active="true"] {
+  background: var(--shell-bg);
+  color: var(--shell-fg);
+  border-color: var(--shell-border-strong);
+  box-shadow: var(--shell-shadow-sm);
+}
+
+/* Respect reduced-motion: state and layout still work, animation is dropped. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

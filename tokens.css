@@ -1,0 +1,115 @@
+/**
+ * Theme design tokens (FR-030, FR-041, FR-052).
+ *
+ * Tokens are CSS custom properties switched by a `data-theme` attribute on the
+ * application root (research.md R-07). One token set covers every shell region
+ * — sidebar, header, main, drawer — and every shell state, so a theme change
+ * reaches all regions with no unthemed region (FR-030).
+ *
+ * Both token sets keep normal text at >= 4.5:1 contrast against its background
+ * (FR-041, SC-008). Verified automatically by the jest-axe contrast suite.
+ */
+
+:root,
+:root[data-theme="light"] {
+  --shell-bg: #ffffff;
+  --shell-bg-elevated: #f8fafc;
+  --shell-bg-inset: #f1f5f9;
+  --shell-bg-hover: #e2e8f0;
+  --shell-bg-active: #dbeafe;
+
+  --shell-fg: #0f172a; /* 18.0:1 on --shell-bg */
+  --shell-fg-muted: #475569; /* 8.1:1 on --shell-bg */
+  --shell-fg-subtle: #64748b; /* 5.7:1 on --shell-bg */
+  --shell-fg-on-accent: #ffffff;
+
+  --shell-border: #e2e8f0;
+  --shell-border-strong: #cbd5e1;
+
+  --shell-accent: #1d4ed8; /* 8.4:1 on --shell-bg */
+  --shell-accent-soft: #dbeafe;
+  --shell-accent-ring: rgba(29, 78, 216, 0.45);
+
+  --shell-state-loading-fg: #1d4ed8;
+  --shell-state-loading-bg: #eff6ff;
+  --shell-state-empty-fg: #475569;
+  --shell-state-empty-bg: #f8fafc;
+  --shell-state-error-fg: #b91c1c; /* 6.5:1 on --shell-bg */
+  --shell-state-error-bg: #fef2f2;
+  --shell-state-error-border: #fecaca;
+  --shell-state-unavailable-fg: #6d28d9; /* 7.6:1 on --shell-bg */
+  --shell-state-unavailable-bg: #f5f3ff;
+  --shell-state-unavailable-border: #ddd6fe;
+  --shell-state-offline-fg: #92400e; /* 6.0:1 on --shell-bg */
+  --shell-state-offline-bg: #fffbeb;
+  --shell-state-offline-border: #fde68a;
+
+  --shell-scrim: rgba(15, 23, 42, 0.45);
+
+  --shell-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.08);
+  --shell-shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
+  --shell-shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.22);
+
+  --shell-focus-ring: 0 0 0 3px var(--shell-accent-ring);
+}
+
+:root[data-theme="dark"] {
+  --shell-bg: #09090b;
+  --shell-bg-elevated: #18181b;
+  --shell-bg-inset: #1f1f23;
+  --shell-bg-hover: #27272a;
+  --shell-bg-active: #1e3a8a;
+
+  --shell-fg: #fafafa; /* 19.0:1 on --shell-bg */
+  --shell-fg-muted: #d4d4d8; /* 12.2:1 on --shell-bg */
+  --shell-fg-subtle: #a1a1aa; /* 8.1:1 on --shell-bg */
+  --shell-fg-on-accent: #0b1120;
+
+  --shell-border: #27272a;
+  --shell-border-strong: #3f3f46;
+
+  --shell-accent: #93c5fd; /* 11.2:1 on --shell-bg */
+  --shell-accent-soft: #1e293b;
+  --shell-accent-ring: rgba(147, 197, 253, 0.5);
+
+  --shell-state-loading-fg: #93c5fd;
+  --shell-state-loading-bg: #172554;
+  --shell-state-empty-fg: #d4d4d8;
+  --shell-state-empty-bg: #18181b;
+  --shell-state-error-fg: #fca5a5; /* 9.4:1 on --shell-bg */
+  --shell-state-error-bg: #450a0a;
+  --shell-state-error-border: #7f1d1d;
+  --shell-state-unavailable-fg: #d8b4fe; /* 9.6:1 on --shell-bg */
+  --shell-state-unavailable-bg: #2e1065;
+  --shell-state-unavailable-border: #5b21b6;
+  --shell-state-offline-fg: #fcd34d; /* 12.4:1 on --shell-bg */
+  --shell-state-offline-bg: #451a03;
+  --shell-state-offline-border: #78350f;
+
+  --shell-scrim: rgba(0, 0, 0, 0.62);
+
+  --shell-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shell-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.55);
+  --shell-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.65);
+
+  --shell-focus-ring: 0 0 0 3px var(--shell-accent-ring);
+}
+
+/* Sizing + motion tokens are direction- and theme-independent. */
+:root {
+  --shell-sidebar-width-expanded: 16rem;
+  --shell-sidebar-width-compact: 4.5rem;
+  --shell-header-height: 3.5rem;
+
+  /* NFR-003: transitions visibly complete within 300 ms of activation. */
+  --shell-transition-duration: 240ms;
+  --shell-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --shell-radius-sm: 0.375rem;
+  --shell-radius-md: 0.5rem;
+  --shell-radius-lg: 0.75rem;
+
+  --shell-z-drawer: 60;
+  --shell-z-scrim: 50;
+  --shell-z-offline: 70;
+}

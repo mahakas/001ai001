@@ -1,0 +1,113 @@
+{
+  "product": {
+    "name": "MAHAK"
+  },
+  "region": {
+    "sidebar": "Navigation",
+    "header": "Header",
+    "main": "Main content"
+  },
+  "dest": {
+    "general-chat": "General AI Chat",
+    "conversations": "Conversations",
+    "projects": "Projects",
+    "private-teacher": "Private Teacher",
+    "files": "Files",
+    "search": "Search",
+    "settings": "Settings",
+    "admin": "Admin Control Center"
+  },
+  "action": {
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "account": "Account",
+    "collapse": "Collapse navigation",
+    "expand": "Expand navigation",
+    "openNavigation": "Open navigation menu",
+    "closeNavigation": "Close navigation menu",
+    "retry": "Try again",
+    "skipToMain": "Skip to main content",
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "locale": {
+      "label": "Language",
+      "fa": "فارسی",
+      "ar": "العربية",
+      "en": "English"
+    }
+  },
+  "auth": {
+    "signUpTitle": "Create your account",
+    "tabEmail": "Email",
+    "tabPhone": "Phone",
+    "email": "Email address",
+    "password": "Password",
+    "phone": "Phone number",
+    "otpCode": "Verification code",
+    "otpSent": "We sent a verification code to your phone.",
+    "otpExpiresIn": "The code expires in {seconds} seconds.",
+    "resendOtp": "Send a new code",
+    "inviteToken": "Invitation code (optional)",
+    "submitEmail": "Create account",
+    "submitPhoneRequest": "Send verification code",
+    "submitPhoneVerify": "Verify and create account",
+    "haveAccount": "Already have an account?",
+    "passwordHint": "At least 8 characters.",
+    "google": {
+      "loading": "Completing sign-in with Google…",
+      "errorInterrupted": "Sign-in was interrupted. Please try again.",
+      "errorFailure": "Sign-in with Google failed. Please try again or sign in with email."
+    },
+    "error": {
+      "invalidEmail": "Enter a valid email address.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "invalidPhone": "Enter a valid phone number in international format, for example +1234567890.",
+      "invalidOtpFormat": "Enter the 6-digit verification code.",
+      "invalidOtp": "That verification code is not correct.",
+      "otpExpired": "That verification code has expired. Request a new one.",
+      "registrationFailed": "Registration could not be completed. Check your details and try again.",
+      "captchaRequired": "Complete the verification challenge to continue.",
+      "rateLimitExceeded": "Too many attempts. Try again in {seconds} seconds.",
+      "serviceUnavailable": "Sign-up is temporarily unavailable. Please try again.",
+      "networkError": "We could not reach the server. Check your connection and try again."
+    }
+  },
+  "state": {
+    "frameLoading": "Preparing the shell…",
+    "loading": {
+      "title": "Loading",
+      "message": "This region is still getting ready. The rest of the shell stays usable."
+    },
+    "empty": {
+      "title": "Nothing to show yet",
+      "message": "There is no content in this region yet. It will appear here once it is ready."
+    },
+    "error": {
+      "title": "Failed to load",
+      "message": "Something went wrong while loading this region. Please try again.",
+      "retry": "Try again"
+    },
+    "unavailable": {
+      "title": "Not available yet",
+      "message": "This module has not been implemented yet. It will become available later."
+    },
+    "offline": {
+      "title": "Connection interrupted",
+      "message": "You are not connected to the network. The shell stays intact and previously rendered regions remain visible."
+    },
+    "entry": {
+      "signIn": {
+        "title": "Sign in",
+        "message": "This entry point is defined for user sign-in. The sign-in experience arrives with R02."
+      },
+      "signUp": {
+        "title": "Sign up",
+        "message": "This entry point is defined for user sign-up. The sign-up experience arrives with R02."
+      }
+    }
+  }
+}

@@ -1,11 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "rootDir": "src",
+    "baseUrl": ".",
+    "rootDir": ".",
     "outDir": "dist",
-    "declaration": true,
-    "declarationMap": true
+    "types": ["vite/client", "node", "vitest/globals", "@testing-library/jest-dom"],
+    "paths": {
+      "@mahak/contracts": ["../../packages/contracts/src/index.ts"],
+      "@/*": ["./src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "tests", "vite.config.ts", "vitest.setup.ts", "playwright.config.ts"],
+  "references": [{ "path": "../../packages/contracts" }]
 }
