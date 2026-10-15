@@ -1,126 +1,57 @@
-# MAHAK Platform
+# MAHAK API
 
-MAHAK is a ChatGPT-like, API-first AI platform with a modern web experience,
-general AI chat, customizable private teachers, projects, multimodal file
-interaction, memory, voice, educational knowledge, AI model orchestration, and
-a complete administrative and AI-operations platform.
+The Application/API layer of the MAHAK platform. In R01 it exists to hold the
+API boundary and expose exactly one stable contract route.
 
-This repository is a **pnpm workspace monorepo** that currently implements
-**R01 — Platform Foundation & Application Shell** (see [ROADMAP.md](ROADMAP.md)
-for the full phased roadmap). R01 establishes a stable, responsive, RTL/LTR,
-themed application shell with reserved entry points for every later product
-module — without implementing any of them.
+## Scope (R01)
 
-## Workspace layout
+- `GET /api/v1/shell` — declares shell mode, feature availability, and locale
+  direction metadata.
+- No authentication, no module endpoints, no AI calls, no secrets
+  (FR-046, FR-055, NFR-006).
+
+## Layout
 
 ```text
-apps/
-  web/          # User Experience layer — React 19 / Vite 7 shell (R01)
-  api/          # Application/API layer — FastAPI, shell contract endpoint (R01)
-packages/
-  contracts/    # Shared, dependency-free contract definitions (TypeScript)
-specs/
-  001-platform-app-shell/   # R01 spec, plan, tasks, contracts, data model
+apps/api/
+├── src/mahak_api/
+│   ├── main.py              # FastAPI bootstrap, versioned /api/v1 prefix
+│   ├── routes/shell.py      # the shell contract endpoint
+│   └── contracts/shell.py   # api-side mirror of packages/contracts values
+├── tests/test_shell_contract.py
+└── pyproject.toml
 ```
 
-## R01 scope (what is implemented)
-
-- A single application shell with exactly three primary regions: sidebar /
-  navigation, header, and main content.
-- Persistent primary navigation with a collapsible/expandable sidebar.
-- Responsive desktop / tablet / mobile presentation, including a mobile overlay
-  navigation drawer.
-- RTL/LTR direction foundation for Persian (`fa`), Arabic (`ar`), and English
-  (`en`).
-- Light / Dark / System theme foundation.
-- Shell-level accessibility (semantic regions, keyboard focus, focus trap,
-  skip-to-main, accessible names, contrast).
-- Shell application states: whole-frame loading, per-region loading, empty,
-  error, unavailable, and offline.
-- A public vs authenticated shell-mode boundary defined as a **contract only**
-  — R01 implements no authentication.
-- Eight reserved navigation destinations, one per future product module
-  (General AI Chat, conversations, projects, Private Teacher, files, search,
-  settings, Admin Control Center), each showing the defined unavailable state.
-- `GET /api/v1/shell` — the stable shell contract endpoint.
-
-### Explicitly out of scope (later roadmap entries)
-
-Authentication, chat/streaming, conversation history, projects, file upload,
-the AI model gateway, Private Teacher, knowledge/RAG, memory, voice, Admin
-functionality, billing, and production deployment. `KNOWLEDGE`, `MEMORY`,
-`VOICE`, and `AI_MODEL_GATEWAY` exist as **identity-only seams** — no
-destination, no slot, no implementation.
-
-## Prerequisites
-
-- **Node.js** `>= 20.19` (developed against `24.21.0`)
-- **pnpm** `10.x`
-- **Python** `>= 3.12` (developed against `3.13`)
-- A modern desktop or mobile browser (current or previous major version)
-
-## Install
+## Setup
 
 ```bash
-pnpm install                       # all workspace packages
-```
-
-The Python API uses its own environment:
-
-```bash
-cd apps/api
 python -m venv .venv
-.venv\Scripts\activate             # Windows
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # Linux / macOS
 pip install -e ".[test]"
-cd ../..
 ```
 
 ## Run
 
-### Web (Vite dev server — port 5173)
-
 ```bash
-pnpm --filter @mahak/web dev
+uvicorn mahak_api.main:app --reload   # from the activated venv
 ```
 
-Open <http://localhost:5173>. The shell defaults to a first-visit state (System
-theme, RTL for Persian). Use `http://localhost:5173/?shellMode=authenticated`
-to exercise the authenticated navigation set.
-
-### API (FastAPI — port 8000)
-
-```bash
-cd apps/api
-uvicorn mahak_api.main:app --reload
-```
-
-Shell contract: <http://localhost:8000/api/v1/shell>
-
-> The web shell is fully functional with the API unreachable — theme,
-> direction, viewport class, sidebar state, and offline indication all resolve
-> locally (client resilience rule).
+Then `GET http://localhost:8000/api/v1/shell`.
 
 ## Validation
 
 ```bash
-pnpm typecheck            # tsc across workspace (web + contracts)
-pnpm lint                 # ESLint (--max-warnings=0)
-pnpm test                 # Vitest (web) + pytest (api)
-pnpm test:e2e             # Playwright E2E (web)
-python -m compileall apps/api   # Python compilation gate
+pytest                                   # api contract tests
+python -m compileall apps/api            # constitution Principle V Python gate
 ```
 
-See [apps/web/README.md](apps/web/README.md) and [apps/api/README.md](apps/api/README.md)
-for detailed per-app instructions, and
-[specs/001-platform-app-shell/quickstart.md](specs/001-platform-app-shell/quickstart.md)
-for ten runnable end-to-end validation scenarios.
+Both commands require no credentials, secrets, or live external services
+(NFR-006).
 
-## Governance & documentation
+## Contract stability
 
-- [ROADMAP.md](ROADMAP.md) — the authoritative feature decomposition and
-  dependency order.
-- `.specify/memory/constitution.md` — the governing engineering contract
-  (principles I–V).
-- `specs/001-platform-app-shell/` — the R01 specification (`spec.md`), plan
-  (`plan.md`), tasks (`tasks.md`), data model (`data-model.md`), contracts
-  (`contracts/`), and quickstart.
+The endpoint path and response shape are stable. Later features may update
+only the carried *values* (for example flipping a `features` entry to
+`available`) and must add their own versioned business routes under
+`/api/v1/...` rather than extending this endpoint (FR-053, FR-054).
